@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
+import 'screens/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const QuizApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class QuizApp extends StatelessWidget {
+  const QuizApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hello World App',
+      title: 'Quiz App',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Hello World App'),
-        ),
-        body: const Center(
-          child: Text(
-            'Hello, World!',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }
