@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/question.dart';
 import '../data/questions.dart';
 import 'result_page.dart';
 
@@ -7,10 +6,10 @@ class QuizPage extends StatefulWidget {
   const QuizPage({Key? key}) : super(key: key);
 
   @override
-  _QuizPageState createState() => _QuizPageState();
+  QuizPageState createState() => QuizPageState();
 }
 
-class _QuizPageState extends State<QuizPage> {
+class QuizPageState extends State<QuizPage> {
   int _currentQuestionIndex = 0;
   int _score = 0;
 
@@ -37,7 +36,7 @@ class _QuizPageState extends State<QuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz'),
+        title: const Text('NANI?'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
