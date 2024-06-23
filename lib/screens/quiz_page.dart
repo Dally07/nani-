@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import '../data/questions.dart'; // Assure-toi d'importer les données correctement
+import 'package:nani/models/question.dart';
+import '../data/questions.dart';
 import 'result_page.dart';
 
 class QuizPage extends StatefulWidget {
@@ -10,40 +12,50 @@ class QuizPage extends StatefulWidget {
 }
 
 class QuizPageState extends State<QuizPage> {
+  List<Question> quizQuestions = [];
   int _currentQuestionIndex = 0;
   int _score = 0;
+  final Random random = Random();
+  bool _answered = false;
+  int? _selectedAnswerIndex;
 
   @override
   void initState() {
     super.initState();
-    // Mélanger les questions au début du quiz
-    questions.shuffle();
+    questions.shuffle(); // Mélanger les questions
+    quizQuestions = questions.take(10).toList(); // Prendre les 10 premières questions
   }
 
-  void _answerQuestion(bool isCorrect) {
-    if (isCorrect) {
-      _score++;
-    }
+  void _answerQuestion(int index, bool isCorrect) {
     setState(() {
-      _currentQuestionIndex++;
+      _answered = true;
+      _selectedAnswerIndex = index;
+      if (isCorrect) {
+        _score++;
+      }
     });
-    if (_currentQuestionIndex < questions.length) {
-      // Naviguer vers la prochaine question
-    } else {
-      // Naviguer vers la page des résultats
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResultPage(score: _score, total: questions.length),
-        ),
-      );
-    }
+
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _currentQuestionIndex++;
+        _answered = false;
+        _selectedAnswerIndex = null;
+      });
+
+      if (_currentQuestionIndex >= quizQuestions.length) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultPage(score: _score, total: quizQuestions.length),
+          ),
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_currentQuestionIndex >= questions.length) {
-      // Gérer le cas où _currentQuestionIndex est en dehors des limites
+    if (_currentQuestionIndex >= quizQuestions.length) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Quiz'),
@@ -59,11 +71,11 @@ class QuizPageState extends State<QuizPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Réinitialiser le quiz (si nécessaire)
                   setState(() {
                     _currentQuestionIndex = 0;
                     _score = 0;
-                    questions.shuffle(); // Mélanger les questions à nouveau
+                    questions.shuffle();
+                    quizQuestions = questions.take(10).toList();
                   });
                 },
                 child: const Text('Restart Quiz'),
@@ -74,7 +86,7 @@ class QuizPageState extends State<QuizPage> {
       );
     }
 
-    final question = questions[_currentQuestionIndex];
+    final question = quizQuestions[_currentQuestionIndex];
 
     return Scaffold(
       appBar: AppBar(
@@ -90,10 +102,34 @@ class QuizPageState extends State<QuizPage> {
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 20),
-            ...question.answers.map((answer) {
-              return ElevatedButton(
-                onPressed: () => _answerQuestion(answer.isCorrect),
-                child: Text(answer.text),
+            ...question.answers.asMap().entries.map((entry) {
+              int index = entry.key;
+              Answer answer = entry.value;
+              Color color;
+
+              if (_answered) {
+                if (index == _selectedAnswerIndex) {
+                  color = answer.isCorrect ? Colors.green : Colors.red;
+                } else if (answer.isCorrect) {
+                  color = Colors.green;
+                } else {
+                  color = Colors.grey; // Change other buttons to grey
+                }
+              } else {
+                color = Colors.blue;
+              }
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10), // Margin for spacing
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: color, // Button background color
+                  ),
+                  onPressed: _answered
+                      ? null
+                      : () => _answerQuestion(index, answer.isCorrect),
+                  child: Text(answer.text),
+                ),
               );
             }).toList(),
           ],
