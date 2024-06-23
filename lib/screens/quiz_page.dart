@@ -59,6 +59,7 @@ class QuizPageState extends State<QuizPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Quiz'),
+          backgroundColor: Colors.teal,
         ),
         body: Center(
           child: Column(
@@ -121,7 +122,7 @@ class QuizPageState extends State<QuizPage> {
                 margin: const EdgeInsets.only(bottom: 10), // Margin for spacing
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _answered ? Colors.grey : Colors.blue, // Button background color
+                    backgroundColor: _answered ? Colors.grey : Colors.teal, // Button background color
                   ),
                   onPressed: _answered
                       ? null

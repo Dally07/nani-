@@ -13,7 +13,7 @@ class QuizApp extends StatelessWidget {
     return MaterialApp(
       title: 'NANI?',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
       home: const HomePage(),
     );
