@@ -35,7 +35,7 @@ class QuizPageState extends State<QuizPage> {
       }
     });
 
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 2), () {
       setState(() {
         _currentQuestionIndex++;
         _answered = false;
@@ -105,30 +105,37 @@ class QuizPageState extends State<QuizPage> {
             ...question.answers.asMap().entries.map((entry) {
               int index = entry.key;
               Answer answer = entry.value;
-              Color color;
+              Widget icon = const SizedBox.shrink();
 
               if (_answered) {
                 if (index == _selectedAnswerIndex) {
-                  color = answer.isCorrect ? Colors.green : Colors.red;
+                  icon = answer.isCorrect
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : const Icon(Icons.close, color: Colors.red);
                 } else if (answer.isCorrect) {
-                  color = Colors.green;
-                } else {
-                  color = Colors.grey; // Change other buttons to grey
+                  icon = const Icon(Icons.check, color: Colors.green);
                 }
-              } else {
-                color = Colors.blue;
               }
 
               return Container(
                 margin: const EdgeInsets.only(bottom: 10), // Margin for spacing
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: color, // Button background color
+                    backgroundColor: _answered ? Colors.grey : Colors.blue, // Button background color
                   ),
                   onPressed: _answered
                       ? null
                       : () => _answerQuestion(index, answer.isCorrect),
-                  child: Text(answer.text),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        answer.text,
+                        style: const TextStyle(color: Colors.white), // Text color
+                      ),
+                      icon,
+                    ],
+                  ),
                 ),
               );
             }).toList(),
