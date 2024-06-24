@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  lottie: ^1.2.2
+  confetti: ^0.6.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +54,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/confetti.json
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

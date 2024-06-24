@@ -59,7 +59,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Welcome to the earth Quiz!',
+                    'Binvenue dans NANI? Quiz!',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> with SingleTickerProviderStateMixin 
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text('Start Quiz'),
+                    child: const Text('Commencer'),
                     onPressed: () {
                       Navigator.push(
                         context,

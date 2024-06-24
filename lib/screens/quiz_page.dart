@@ -22,8 +22,18 @@ class QuizPageState extends State<QuizPage> {
   @override
   void initState() {
     super.initState();
-    questions.shuffle(); // Mélanger les questions
-    quizQuestions = questions.take(10).toList(); // Prendre les 10 premières questions
+    _startNewQuiz();
+  }
+
+  void _startNewQuiz() {
+    setState(() {
+      questions.shuffle(); // Mélanger les questions
+      quizQuestions = questions.take(10).toList(); // Prendre les 10 premières questions
+      _currentQuestionIndex = 0;
+      _score = 0;
+      _answered = false;
+      _selectedAnswerIndex = null;
+    });
   }
 
   void _answerQuestion(int index, bool isCorrect) {
@@ -36,19 +46,21 @@ class QuizPageState extends State<QuizPage> {
     });
 
     Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _currentQuestionIndex++;
-        _answered = false;
-        _selectedAnswerIndex = null;
-      });
+      if (mounted) {
+        setState(() {
+          _currentQuestionIndex++;
+          _answered = false;
+          _selectedAnswerIndex = null;
+        });
 
-      if (_currentQuestionIndex >= quizQuestions.length) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ResultPage(score: _score, total: quizQuestions.length),
-          ),
-        );
+        if (_currentQuestionIndex >= quizQuestions.length) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResultPage(score: _score, total: quizQuestions.length, onRestart: _startNewQuiz),
+            ),
+          );
+        }
       }
     });
   }
@@ -71,14 +83,7 @@ class QuizPageState extends State<QuizPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _currentQuestionIndex = 0;
-                    _score = 0;
-                    questions.shuffle();
-                    quizQuestions = questions.take(10).toList();
-                  });
-                },
+                onPressed: _startNewQuiz,
                 child: const Text('Restart Quiz'),
               ),
             ],
