@@ -1,5 +1,7 @@
+import 'dart:async'; // Importer Timer
 import 'dart:math';
 import 'package:flutter/material.dart';
+
 import 'package:nani/models/question.dart';
 import '../data/questions.dart';
 import 'result_page.dart';
@@ -18,6 +20,8 @@ class QuizPageState extends State<QuizPage> {
   final Random random = Random();
   bool _answered = false;
   int? _selectedAnswerIndex;
+  Timer? _timer; // Déclaration du Timer
+  int _timeLeft = 10; // Temps limite en secondes
 
   @override
   void initState() {
@@ -25,6 +29,7 @@ class QuizPageState extends State<QuizPage> {
     _startNewQuiz();
   }
 
+  // Fonction pour démarrer ou redémarrer un quiz
   void _startNewQuiz() {
     setState(() {
       questions.shuffle(); // Mélanger les questions
@@ -33,13 +38,36 @@ class QuizPageState extends State<QuizPage> {
       _score = 0;
       _answered = false;
       _selectedAnswerIndex = null;
+      _startTimer(); // Démarrer le timer
     });
   }
 
+  // Démarrer le timer pour chaque question
+  void _startTimer() {
+    _timer?.cancel(); // Annuler le timer précédent
+    _timeLeft = 10; // Temps initial
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_timeLeft > 0) {
+          _timeLeft--;
+        } else {
+          // Temps écoulé
+          _timer?.cancel();
+          if (!_answered) {
+            _answerQuestion(-1, false); // Considérer comme incorrect
+          }
+        }
+      });
+    });
+  }
+
+  // Fonction pour répondre à une question
   void _answerQuestion(int index, bool isCorrect) {
     setState(() {
       _answered = true;
       _selectedAnswerIndex = index;
+      _timer?.cancel(); // Arrêter le timer
+
       if (isCorrect) {
         _score++;
       }
@@ -57,12 +85,24 @@ class QuizPageState extends State<QuizPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => ResultPage(score: _score, total: quizQuestions.length, onRestart: _startNewQuiz),
+              builder: (context) => ResultPage(
+                score: _score,
+                total: quizQuestions.length,
+                onRestart: _startNewQuiz,
+              ),
             ),
           );
+        } else {
+          _startTimer(); // Redémarrer le timer pour la nouvelle question
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Nettoyage du timer
+    super.dispose();
   }
 
   @override
@@ -70,7 +110,7 @@ class QuizPageState extends State<QuizPage> {
     if (_currentQuestionIndex >= quizQuestions.length) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Quiz'),
+          title: const Text('Nani?'),
           backgroundColor: Colors.teal,
         ),
         body: Center(
@@ -108,6 +148,11 @@ class QuizPageState extends State<QuizPage> {
               style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 20),
+            Text(
+              'Time left: $_timeLeft seconds',
+              style: const TextStyle(fontSize: 18, color: Colors.red),
+            ),
+            const SizedBox(height: 20),
             ...question.answers.asMap().entries.map((entry) {
               int index = entry.key;
               Answer answer = entry.value;
@@ -124,10 +169,10 @@ class QuizPageState extends State<QuizPage> {
               }
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 10), // Margin for spacing
+                margin: const EdgeInsets.only(bottom: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _answered ? Colors.grey : Colors.teal, // Button background color
+                    backgroundColor: _answered ? Colors.grey : Colors.teal,
                   ),
                   onPressed: _answered
                       ? null
@@ -137,7 +182,7 @@ class QuizPageState extends State<QuizPage> {
                     children: [
                       Text(
                         answer.text,
-                        style: const TextStyle(color: Colors.white), // Text color
+                        style: const TextStyle(color: Colors.white),
                       ),
                       icon,
                     ],
