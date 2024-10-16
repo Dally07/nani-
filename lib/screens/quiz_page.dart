@@ -1,4 +1,4 @@
-import 'dart:async'; // Importer Timer
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -7,7 +7,8 @@ import '../data/questions.dart';
 import 'result_page.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({Key? key}) : super(key: key);
+  const QuizPage({Key? key, required this.quizTitle}) : super(key: key);
+  final String quizTitle;
 
   @override
   QuizPageState createState() => QuizPageState();
@@ -21,7 +22,7 @@ class QuizPageState extends State<QuizPage> {
   bool _answered = false;
   int? _selectedAnswerIndex;
   Timer? _timer; // Déclaration du Timer
-  int _timeLeft = 10; // Temps limite en secondes
+  int _timeLeft = 20; // Temps limite en secondes
 
   @override
   void initState() {
@@ -32,20 +33,21 @@ class QuizPageState extends State<QuizPage> {
   // Fonction pour démarrer ou redémarrer un quiz
   void _startNewQuiz() {
     setState(() {
-      questions.shuffle(); // Mélanger les questions
-      quizQuestions = questions.take(10).toList(); // Prendre les 10 premières questions
+      List<Question> filteredQuiz = questions.where((q) => q.quizTitle == widget.quizTitle).toList();
+      questions.shuffle();
+      quizQuestions = filteredQuiz.take(10).toList();
       _currentQuestionIndex = 0;
       _score = 0;
       _answered = false;
       _selectedAnswerIndex = null;
-      _startTimer(); // Démarrer le timer
+      _startTimer();
     });
   }
 
   // Démarrer le timer pour chaque question
   void _startTimer() {
     _timer?.cancel(); // Annuler le timer précédent
-    _timeLeft = 10; // Temps initial
+    _timeLeft = 20; // Temps initial
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_timeLeft > 0) {

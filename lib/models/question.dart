@@ -1,8 +1,9 @@
 class Question {
+  final String quizTitle;
   final String questionText;
   final List<Answer> answers;
 
-  Question({required this.questionText, required this.answers});
+  Question({required this.quizTitle, required this.questionText, required this.answers});
 }
 
 class Answer {
