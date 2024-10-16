@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 100 100">
+  <!-- Computer screen -->
+  <rect x="10" y="10" width="80" height="50" rx="5" ry="5" fill="#90CAF9" stroke="#1976D2" stroke-width="2"/>
+  
+  <!-- Stand of the computer -->
+  <rect x="45" y="65" width="10" height="15" fill="#1976D2"/>
+  
+  <!-- Keyboard -->
+  <rect x="30" y="80" width="40" height="5" fill="#1976D2"/>
+  
+  <!-- Quiz question mark -->
+  <text x="50%" y="35%" dominant-baseline="middle" text-anchor="middle" font-size="20" fill="white">?</text>
+</svg>

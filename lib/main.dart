@@ -16,6 +16,7 @@ class QuizApp extends StatelessWidget {
         primarySwatch: Colors.teal,
       ),
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
